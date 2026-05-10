@@ -26,3 +26,5 @@ class Users(models.Model):
   password = models.CharField(max_length=255, blank=False)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
+
+  profile = models.ImageField(upload_to='profiles/', null=True, blank=True)

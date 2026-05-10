@@ -1,3 +1,4 @@
+
 {% extends "layout/base.html" %}
 {% block 'title' %}
 User List
@@ -12,43 +13,128 @@ User List
 
 <div class="p-2 sm:ml-64 mt-16 md:mt-14">
     <div class="relative overflow-x-auto rounded-sm shadow-sm">
+        <form method="GET" class="mb-4">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search User..."
+        value="{{ search|default:'' }}"
+        class="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded-sm
+        focus:outline-none focus:ring-blue-600 focus:border-blue-600"
+    >
+
+</form>
         <table class="w-full">
             <thead class="text-xs text-left text-white bg-blue-600">
-                <tr>
-                    <th class="px-6 py-3">Gender</th>
-                    <th class="px-6 py-3">Gender</th>
-                    <th class="px-6 py-3">Birth Date</th>
-                    <th class="px-6 py-3">Address</th>
-                    <th class="px-6 py-3">Contact Number</th>
-                    <th class="px-6 py-3">Email</th>
-                    <th class="px-6 py-3">Action</th>
-                    
-                </tr>
+                
+                <thead class="text-xs text-left text-white bg-blue-600">
+
+    <tr>
+        <th class="px-6 py-3">Profile</th>
+        <th class="px-6 py-3">Name</th>
+        <th class="px-6 py-3">Gender</th>
+        <th class="px-6 py-3">Birth Date</th>
+        <th class="px-6 py-3">Address</th>
+        <th class="px-6 py-3">Contact Number</th>
+        <th class="px-6 py-3">Email</th>
+        <th class="px-6 py-3">Action</th>
+    </tr>
+
+</thead>
             </thead>
 
             <tbody class="text-xs text-black">
-                {% for user in users %}
-                <tr class="hover:bg-gray-100 border-b border-gray-200">
-                    <td class="px-6 py-3">{{ user.full_name }}</td>
-                    <td class="px-6 py-3">{{ user.gender.gender }}</td>
-                    <td class="px-6 py-3">{{ user.birth_date }}</td>
-                    <td class="px-6 py-3">{{ user.address }}</td>
-                    <td class="px-6 py-3">{{ user.contact_number }}</td>
-                    <td class="px-6 py-3">{{ user.email }}</td>
-                    <td class="px-6 py-3">
-                       <div class="inline-flex shadow-sm">
-                        <a href="/gender/edit/{{gender.gender_id}}" class="bg-green-600 px-3 py-2.5 font-medium text-white rounded-s-sm hover:bg-green-700
-                         hover:outline-none">Edit</a>
-                         <a href="#" class="bg-red-600 px-3 py-2.5 font-medium text-sm text-white rounded-e-sm hover:bg-red-700
-                         hover:outline-none">Delete</a>
-                       </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+
+    {% for user in users %}
+
+    <tr class="hover:bg-gray-100 border-b border-gray-200">
+
+        <td class="px-6 py-3">
+    {% if user.profile %}
+        <img src="{{ user.profile.url }}"
+             class="w-12 h-12 rounded-full object-cover">
+    {% else %}
+        No Image
+    {% endif %}
+</td>
+
+        <td class="px-6 py-3">{{ user.full_name }}</td>
+        <td class="px-6 py-3">{{ user.gender.gender }}</td>
+        <td class="px-6 py-3">{{ user.birth_date }}</td>
+        <td class="px-6 py-3">{{ user.address }}</td>
+        <td class="px-6 py-3">{{ user.contact_number }}</td>
+        <td class="px-6 py-3">{{ user.email }}</td>
+
+        <td class="px-6 py-3">
+
+            <div class="inline-flex shadow-sm">
+
+                <a
+                    href="/user/edit/{{ user.user_id }}"
+                    class="bg-green-600 px-3 py-2.5 font-medium text-white rounded-s-sm hover:bg-green-700"
+                >
+                    Edit
+                </a>
+
+                <a
+                    href="/user/delete/{{ user.user_id }}"
+                    class="bg-red-600 px-3 py-2.5 font-medium text-sm text-white rounded-e-sm hover:bg-red-700"
+                >
+                    Delete
+                </a>
+
+            </div>
+
+        </td>
+
+    </tr>
+
+        {% endfor %}
+
+</tbody>
+
+</table>
+
 </div>
 
+<!-- PAGINATION -->
+<div class="flex justify-center items-center gap-3 mt-6 mb-4">
 
-{% endblock 'content' %}
+    {% if page_obj.has_previous %}
+
+        <a href="?page=1{% if search %}&search={{ search }}{% endif %}"
+           class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition duration-300 shadow-md">
+            First
+        </a>
+
+        <a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}"
+           class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition duration-300 shadow-md">
+            Previous
+        </a>
+
+    {% endif %}
+
+    <div class="px-5 py-2 rounded-lg bg-white border border-blue-300 text-blue-700 shadow-sm font-medium">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </div>
+
+    {% if page_obj.has_next %}
+
+        <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}"
+           class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition duration-300 shadow-md">
+            Next
+        </a>
+
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}"
+           class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition duration-300 shadow-md">
+            Last
+        </a>
+
+    {% endif %}
+
+</div>
+
+</div>
+
+{% endblock %}
