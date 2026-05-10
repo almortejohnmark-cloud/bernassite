@@ -109,8 +109,8 @@ def user_list(request):
         if search:
             userObj = userObj.filter(
                 Q(full_name__icontains=search) |
-                Q(email=search) |
-                Q(address=search)
+                Q(email__icontains=search) |
+                Q(address__icontains=search)
             )
 
              # PAGINATION
@@ -154,6 +154,10 @@ def add_user(request):
             if not fullname or not gender or not birthdate or not username or not password:
                 messages.error(request, 'Please fill all required fields.')
                 return redirect('/user/add')
+            
+            if '@' not in email:
+               messages.error(request, 'Invalid email!')
+               return redirect('/user/add')
 
         # USERNAME UNIQUE
             if Users.objects.filter(username=username).exists():
@@ -163,6 +167,8 @@ def add_user(request):
             if password != confirmPassword:
                 messages.error(request, 'Password does not match')
                 return redirect('/user/add')
+            
+            
 
             Users.objects.create(
                 full_name=fullname,
@@ -194,25 +200,96 @@ def add_user(request):
         return HttpResponse(f'Error occured during add user: {e}')
     
 def edit_user(request, userId):
-    userObj = Users.objects.get(pk=userId)
 
-    if request.method == 'POST':
-        userObj.full_name = request.POST.get('full_name')
-        userObj.birth_date = request.POST.get('birth_date')
-        userObj.address = request.POST.get('address')
-        userObj.contact_number = request.POST.get('contact_number')
-        userObj.email = request.POST.get('email')
+    try:
 
-        profile = request.FILES.get('profile')
-        if profile:
-            userObj.profile = profile
+        userObj = Users.objects.get(pk=userId)
 
-        userObj.save()
-        return redirect('/user/list')
+        if request.method == 'POST':
 
-    data = {'user': userObj}
-    return render(request, 'layout/user/EditUser.html', data)
+            fullname = request.POST.get('full_name')
+            gender = request.POST.get('gender')
+            birthdate = request.POST.get('birth_date')
+            address = request.POST.get('address')
+            contact = request.POST.get('contact')
+            email = request.POST.get('email')
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            confirmPassword = request.POST.get('confirm_password')
 
+            profile = request.FILES.get('profile')
+
+            # REQUIRED VALIDATION
+            if not fullname or not gender or not birthdate or not username or not email:
+                messages.error(request, 'Please fill in all required fields!')
+                return redirect(f'/user/edit/{userId}')
+
+            # EMAIL VALIDATION
+            if '@' not in email:
+                messages.error(request, 'Invalid email!')
+                return redirect(f'/user/edit/{userId}')
+
+            # CONTACT VALIDATION
+            if contact and not contact.isdigit():
+                messages.error(request, 'Contact number must be numeric!')
+                return redirect(f'/user/edit/{userId}')
+
+            # USERNAME VALIDATION
+            usernameExist = Users.objects.filter(username=username).exclude(pk=userId).exists()
+
+            if usernameExist:
+                messages.error(request, 'Username already exists!')
+                return redirect(f'/user/edit/{userId}')
+
+            # PASSWORD VALIDATION
+            if password or confirmPassword:
+
+                if password != confirmPassword:
+                    messages.error(request, 'Passwords do not match!')
+                    return redirect(f'/user/edit/{userId}')
+
+                userObj.password = make_password(password)
+
+            # IMAGE VALIDATION
+            if profile:
+
+                allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
+
+                if profile.content_type not in allowedTypes:
+                    messages.error(request, 'Invalid image type!')
+                    return redirect(f'/user/edit/{userId}')
+
+                userObj.profile = profile
+
+            # UPDATE USER
+            userObj.full_name = fullname
+            userObj.gender_id = gender
+            userObj.birth_date = birthdate
+            userObj.address = address
+            userObj.contact = contact
+            userObj.email = email
+            userObj.username = username
+
+            userObj.save()
+
+            messages.success(request, 'User updated successfully!')
+
+            return redirect('/user/list')
+
+        else:
+
+            genders = Genders.objects.all()
+
+            data = {
+                'user': userObj,
+                'genders': genders
+            }
+
+            return render(request, 'layout/user/EditUser.html', data)
+
+    except Exception as e:
+
+        return HttpResponse(f'Error occured during edit user: {e}')
 def delete_user(request, userId):
     userObj = Users.objects.get(pk=userId)
 
