@@ -5,12 +5,12 @@
 
         {% if message.tags == 'error' %}
 
-        <!-- ERROR TOAST -->
+        
         <div id="toast-danger"
             class="flex ml-64 mt-16 items-center w-full z-50 max-w-xs p-4 mb-4 text-red-200 bg-[#1e293b] border border-red-500 rounded-xl shadow-lg"
             role="alert">
 
-            <!-- X ICON -->
+           
             <div
                 class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-red-400 bg-red-500/20 rounded-lg">
 
@@ -37,12 +37,11 @@
 
         {% else %}
 
-        <!-- SUCCESS TOAST -->
         <div id="toast-success"
             class="flex ml-64 mt-16 items-center w-full z-50 max-w-xs p-4 mb-4 text-blue-100 bg-[#1e293b] border border-blue-500 rounded-xl shadow-lg"
             role="alert">
 
-            <!-- CHECK ICON -->
+           
             <div
                 class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-blue-300 bg-blue-500/20 rounded-lg">
 
@@ -69,7 +68,7 @@
     {% endfor %}
 {% endif %}
 
-<!-- AUTO HIDE -->
+
 <script>
     setTimeout(() => {
         const toasts = document.querySelectorAll('#toast-success, #toast-danger');

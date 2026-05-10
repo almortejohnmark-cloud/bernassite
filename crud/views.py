@@ -149,6 +149,13 @@ def add_user(request):
             confirmPassword = request.POST.get('confirm_password')
 
             profile = request.FILES.get('profile', None)
+
+            allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
+
+            if profile:
+                 if profile.content_type not in allowedTypes:
+                  messages.error(request, 'Invalid image type!')
+                 return redirect('/user/add')
             
             # REQUIRED VALIDATION
             if not fullname or not gender or not birthdate or not username or not password:
@@ -157,6 +164,10 @@ def add_user(request):
             
             if '@' not in email:
                messages.error(request, 'Invalid email!')
+               return redirect('/user/add')
+            
+            if contactnumber and not contactnumber.isdigit():
+               messages.error(request, 'Contact number must be numeric!')
                return redirect('/user/add')
 
         # USERNAME UNIQUE
@@ -211,7 +222,7 @@ def edit_user(request, userId):
             gender = request.POST.get('gender')
             birthdate = request.POST.get('birth_date')
             address = request.POST.get('address')
-            contact = request.POST.get('contact')
+            contactnumber = request.POST.get('contact_number')
             email = request.POST.get('email')
             username = request.POST.get('username')
             password = request.POST.get('password')
@@ -230,7 +241,7 @@ def edit_user(request, userId):
                 return redirect(f'/user/edit/{userId}')
 
             # CONTACT VALIDATION
-            if contact and not contact.isdigit():
+            if contactnumber and not contactnumber.isdigit():
                 messages.error(request, 'Contact number must be numeric!')
                 return redirect(f'/user/edit/{userId}')
 
@@ -266,7 +277,7 @@ def edit_user(request, userId):
             userObj.gender_id = gender
             userObj.birth_date = birthdate
             userObj.address = address
-            userObj.contact = contact
+            userObj.contact_number = contactnumber
             userObj.email = email
             userObj.username = username
 
@@ -290,8 +301,11 @@ def edit_user(request, userId):
     except Exception as e:
 
         return HttpResponse(f'Error occured during edit user: {e}')
+    
+
 def delete_user(request, userId):
     userObj = Users.objects.get(pk=userId)
+    
 
     if request.method == 'POST':
         userObj.delete()

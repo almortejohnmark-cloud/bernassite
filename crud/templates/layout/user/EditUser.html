@@ -18,6 +18,7 @@
                 <!-- LEFT COLUMN -->
                 <div class="col-span-1">
 
+                    <!-- FULL NAME -->
                     <div class="mb-4">
                         <label for="full_name" class="block text-sm font-medium mb-2">
                             Full Name
@@ -32,6 +33,33 @@
                         />
                     </div>
 
+                    <!-- GENDER -->
+                    <div class="mb-4">
+                        <label for="gender" class="block text-sm font-medium mb-2">
+                            Gender
+                        </label>
+
+                        <select
+                            name="gender"
+                            id="gender"
+                            class="bg-white mb-2 px-3 py-2.5 border border-gray-300 text-black block text-sm rounded-sm w-full focus:outline-none focus:ring-blue-600 focus:border-blue-600"
+                        >
+
+                            {% for gender in genders %}
+
+                            <option
+                                value="{{ gender.gender_id }}"
+                                {% if user.gender.gender_id == gender.gender_id %}selected{% endif %}
+                            >
+                                {{ gender.gender }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <!-- BIRTH DATE -->
                     <div class="mb-4">
                         <label for="birth_date" class="block text-sm font-medium mb-2">
                             Birth Date
@@ -46,6 +74,7 @@
                         />
                     </div>
 
+                    <!-- ADDRESS -->
                     <div class="mb-4">
                         <label for="address" class="block text-sm font-medium mb-2">
                             Address
@@ -60,25 +89,27 @@
                         />
                     </div>
 
-                    <div class="mb-4">
-                        <label for="contact_number" class="block text-sm font-medium mb-2">
-                            Contact Number
-                        </label>
+                    <!-- CONTACT NUMBER -->
+                   <div class="mb-4">
+                     <label for="contact_number" class="block text-sm font-medium mb-2">
+                      Contact Number
+                       </label>
 
-                        <input
-                            type="text"
-                            class="bg-white mb-2 px-3 py-2.5 border border-gray-300 text-black block text-sm rounded-sm w-full focus:outline-none focus:ring-blue-600 focus:border-blue-600"
-                            name="contact_number"
-                            id="contact_number"
-                            value="{{ user.contact_number }}"
-                        />
-                    </div>
+                    <input
+                       type="text"
+                       class="bg-white mb-2 px-3 py-2.5 border border-gray-300 text-black block text-sm rounded-sm w-full focus:outline-none focus:ring-blue-600 focus:border-blue-600"
+         name="contact_number"
+        id="contact_number"
+        value="{{ user.contact_number }}"
+    />
+</div>
 
                 </div>
 
                 <!-- RIGHT COLUMN -->
                 <div class="col-span-1">
 
+                    <!-- EMAIL -->
                     <div class="mb-4">
                         <label for="email" class="block text-sm font-medium mb-2">
                             Email
@@ -90,6 +121,49 @@
                             name="email"
                             id="email"
                             value="{{ user.email }}"
+                        />
+                    </div>
+
+                    <!-- USERNAME -->
+                    <div class="mb-4">
+                        <label for="username" class="block text-sm font-medium mb-2">
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            class="bg-white mb-2 px-3 py-2.5 border border-gray-300 text-black block text-sm rounded-sm w-full focus:outline-none focus:ring-blue-600 focus:border-blue-600"
+                            name="username"
+                            id="username"
+                            value="{{ user.username }}"
+                        />
+                    </div>
+
+                    <!-- PASSWORD -->
+                    <div class="mb-4">
+                        <label for="password" class="block text-sm font-medium mb-2">
+                            New Password
+                        </label>
+
+                        <input
+                            type="password"
+                            class="bg-white mb-2 px-3 py-2.5 border border-gray-300 text-black block text-sm rounded-sm w-full focus:outline-none focus:ring-blue-600 focus:border-blue-600"
+                            name="password"
+                            id="password"
+                        />
+                    </div>
+
+                    <!-- CONFIRM PASSWORD -->
+                    <div class="mb-4">
+                        <label for="confirm_password" class="block text-sm font-medium mb-2">
+                            Confirm Password
+                        </label>
+
+                        <input
+                            type="password"
+                            class="bg-white mb-2 px-3 py-2.5 border border-gray-300 text-black block text-sm rounded-sm w-full focus:outline-none focus:ring-blue-600 focus:border-blue-600"
+                            name="confirm_password"
+                            id="confirm_password"
                         />
                     </div>
 
