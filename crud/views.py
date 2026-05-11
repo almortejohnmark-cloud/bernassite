@@ -26,9 +26,15 @@ def gender_list(request):
 # Add Gender
 def add_gender(request):
     try:
+
         if request.method == 'POST':
 
             gender = request.POST.get('gender')
+
+            # VALIDATION
+            if not gender:
+                messages.error(request, 'Gender is required!')
+                return redirect('/gender/add')
 
             Genders.objects.create(gender=gender)
 
@@ -37,11 +43,12 @@ def add_gender(request):
             return redirect('/gender/list')
 
         else:
+
             return render(request, 'layout/gender/AddGender.html')
 
     except Exception as e:
-        return HttpResponse(f'Error occured during add gender: {e}')
 
+        return HttpResponse(f'Error occured during add gender: {e}')
 
 # Edit Gender
 def edit_gender(request, genderId):
