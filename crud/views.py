@@ -135,7 +135,9 @@ def user_list(request):
         return HttpResponse(f'Error occured during load users: {e}')        
     
 def add_user(request):
+
     try:
+
         if request.method == 'POST':
 
             fullname = request.POST.get('full_name')
@@ -150,37 +152,41 @@ def add_user(request):
 
             profile = request.FILES.get('profile', None)
 
+            # IMAGE VALIDATION
             allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
 
             if profile:
-                 if profile.content_type not in allowedTypes:
-                  messages.error(request, 'Invalid image type!')
-                 return redirect('/user/add')
-            
+
+                if profile.content_type not in allowedTypes:
+                    messages.error(request, 'Invalid image type!')
+                    return redirect('/user/add')
+
             # REQUIRED VALIDATION
             if not fullname or not gender or not birthdate or not username or not password:
                 messages.error(request, 'Please fill all required fields.')
                 return redirect('/user/add')
-            
-            if '@' not in email:
-               messages.error(request, 'Invalid email!')
-               return redirect('/user/add')
-            
-            if contactnumber and not contactnumber.isdigit():
-               messages.error(request, 'Contact number must be numeric!')
-               return redirect('/user/add')
 
-        # USERNAME UNIQUE
+            # EMAIL VALIDATION
+            if '@' not in email:
+                messages.error(request, 'Invalid email!')
+                return redirect('/user/add')
+
+            # CONTACT VALIDATION
+            if contactnumber and not contactnumber.isdigit():
+                messages.error(request, 'Contact number must be numeric!')
+                return redirect('/user/add')
+
+            # USERNAME UNIQUE
             if Users.objects.filter(username=username).exists():
                 messages.error(request, 'Username already exists.')
                 return redirect('/user/add')
 
+            # PASSWORD MATCH
             if password != confirmPassword:
                 messages.error(request, 'Password does not match')
                 return redirect('/user/add')
-            
-            
 
+            # SAVE USER
             Users.objects.create(
                 full_name=fullname,
                 profile=profile,
@@ -208,6 +214,7 @@ def add_user(request):
             return render(request, 'layout/user/AddUser.html', data)
 
     except Exception as e:
+
         return HttpResponse(f'Error occured during add user: {e}')
     
 def edit_user(request, userId):
